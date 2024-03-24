@@ -19,8 +19,8 @@ Table users {
 }
 
 Table article_tag_relations {
-  tag_id interger
-  article_id interger
+  tag_id integer
+  article_id integer
 }
 
 Table tags {
