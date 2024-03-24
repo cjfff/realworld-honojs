@@ -1,6 +1,6 @@
-import { Hono } from 'hono'
+import { createApp } from './utils'
 
-const app = new Hono()
+const app = createApp()
 
 app.get('/tags', (c) => c.json('tags list'))
 

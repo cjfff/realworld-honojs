@@ -1,6 +1,6 @@
-import { Hono } from 'hono'
+import { createApp } from './utils'
 
-const app = new Hono()
+const app = createApp()
 
 app.get('/:username', (c) => c.json('get user profile'))
 app.post('/:username/follow', (c) => c.json('follow user'))

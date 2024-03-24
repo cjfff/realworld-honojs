@@ -1,7 +1,6 @@
-// users.ts
-import { Hono } from 'hono'
+import { createApp } from './utils'
 
-const app = new Hono()
+const app = createApp()
 
 app.post('/login', (c) => c.json('login'))
 app.post('/users', (c) => c.json('register an user'))

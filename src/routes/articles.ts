@@ -1,8 +1,10 @@
-import { Hono } from 'hono'
+import { createApp } from './utils'
 
-const app = new Hono()
+const app = createApp()
 
-app.get('/', (c) => c.json('get articles'))
+app.get('/', (c) =>{
+     return c.json('get articles')
+})
 app.get('/feed', (c) => c.json('article related to followed user'))
 app.get('/:slug', (c) => c.json('single article'))
 app.post('/', (c) => c.json('create article'))
