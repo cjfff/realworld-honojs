@@ -5,8 +5,13 @@ import articles from './articles'
 import tags from './tags'
 import { prisma } from '../db'
 import { createApp } from './utils'
+import { logger } from 'hono/logger'
+import { poweredBy } from 'hono/powered-by'
 
 const app = createApp().basePath(config.basePath)
+
+app.use(logger())
+app.use(poweredBy())
 
 app.use(async (ctx, next) => {
     ctx.set('$db', prisma)
