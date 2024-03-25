@@ -2,8 +2,12 @@ import { createApp } from './utils'
 
 const app = createApp()
 
-app.get('/', (c) =>{
-     return c.json('get articles')
+app.get('/', async (c) =>{
+     const db = await c.get('$db')
+     const list = await db.article.findMany()
+     return c.json({
+          list
+     })
 })
 app.get('/feed', (c) => c.json('article related to followed user'))
 app.get('/:slug', (c) => c.json('single article'))

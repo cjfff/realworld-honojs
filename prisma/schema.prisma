@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  username String
+  bio String?
+  email String @unique
+  image String?
+}
+
+
+model Follow {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  followingUserId Int
+  followedUserId Int
+  status Int @default(1)
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name String @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Int @default(0)
+}
+
+model ArticleTagRelation {
+  id        Int      @id @default(autoincrement())
+  tagId Int
+  articleId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status Int @default(1)
+}
+
+model ArticleFavorite {
+  id        Int      @id @default(autoincrement())
+  articleId Int
+  userId Int
+  favorite Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status Int @default(1)
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  authorId Int
+  title String @db.VarChar(255)
+  body String
+  description String @db.VarChar(255)
+  slug String @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status Int @default(1)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body String
+  authorId Int
+  articleId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status Int @default(1)
+}
+
+
+

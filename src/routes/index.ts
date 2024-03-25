@@ -1,12 +1,17 @@
-// index.ts
-import { Hono } from 'hono'
 import config from '../config'
 import users from './users'
 import profiles from './profiles'
 import articles from './articles'
 import tags from './tags'
+import { prisma } from '../db'
+import { createApp } from './utils'
 
-const app = new Hono().basePath(config.basePath)
+const app = createApp().basePath(config.basePath)
+
+app.use(async (ctx, next) => {
+    ctx.set('$db', prisma)
+    await next()
+})
 
 app.route('/users', users)
 app.route('/profiles', profiles)
