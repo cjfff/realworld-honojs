@@ -1,8 +1,14 @@
-import { createApp } from "./utils";
+import { getUserByEmail } from "./auth/service";
+import { createApp, createJWTMiddleware } from "./utils";
 const app = createApp();
 
+app.use(createJWTMiddleware());
+app.get("/", async (c) => {
+  const body = c.get("jwtPayload");
+  const user = await getUserByEmail(body.email);
 
-app.get("/user", (c) => c.json(`get user`));
+  return c.json(user);
+});
 app.put("/user", (c) => c.json(`put user`));
 
 export default app;

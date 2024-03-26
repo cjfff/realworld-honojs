@@ -5,7 +5,7 @@ import profiles from './profiles'
 import articles from './articles'
 import tags from './tags'
 import { prisma } from '../db'
-import { createApp } from './utils'
+import { createApp, createJWTMiddleware } from './utils'
 import { logger } from 'hono/logger'
 import { poweredBy } from 'hono/powered-by'
 
