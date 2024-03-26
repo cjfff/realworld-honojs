@@ -5,6 +5,7 @@ import { pick } from "lodash-es";
 import { sign } from "hono/jwt";
 import { getExpireTime } from "../../utils/expire";
 import config from "../../config";
+import { getUserByEmail } from './service'
 
 const app = createApp();
 
@@ -23,11 +24,8 @@ const createToken = async (user: any) => {
 
 app.post("/login", loginValidator(), async (c) => {
   const body = c.req.valid("json");
-  const user = await c.get("$db").user.findUnique({
-    where: {
-      email: body.email,
-    },
-  });
+
+  const user = await getUserByEmail(body.email)
 
   if (!user) {
     return c.json("not found", 400);
@@ -45,6 +43,12 @@ app.post("/login", loginValidator(), async (c) => {
 
 app.post("/", registerValidator(), async (c) => {
   const data = c.req.valid("json");
+
+  const existedUser = await getUserByEmail(data.email)
+
+  if (existedUser) {
+    return c.json("user registered", 400);
+  }
 
   const user = await c.get("$db").user.create({
     data: {
