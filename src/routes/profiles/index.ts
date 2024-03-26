@@ -1,6 +1,3 @@
-import { Context } from "hono";
-import { pick } from "lodash-es";
-import { getUserByUserName } from "../auth/service";
 import { createApp, createJWTMiddleware } from "../utils";
 import { getProfile, switchFollow } from "./service";
 
