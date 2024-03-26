@@ -14,7 +14,7 @@ app.get("/", async (c) => {
   });
 });
 app.put("/", updateValidator(), async (c) => {
-  const body = c.req.valid("json");
+  const { user: body } = c.req.valid("json");
   const { email } = c.get("jwtPayload");
   const user = await getUserByEmail(email);
 
