@@ -1,5 +1,6 @@
 import config from '../config'
-import users from './users'
+import auth from './auth'
+import user from './user'
 import profiles from './profiles'
 import articles from './articles'
 import tags from './tags'
@@ -18,7 +19,8 @@ app.use(async (ctx, next) => {
     await next()
 })
 
-app.route('/users', users)
+app.route('/users', auth)
+app.route('/user', user)
 app.route('/profiles', profiles)
 app.route('/articles', articles)
 app.route('/tags', tags)
