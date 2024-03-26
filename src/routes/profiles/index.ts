@@ -1,40 +1,35 @@
+import { Context } from "hono";
 import { pick } from "lodash-es";
 import { getUserByUserName } from "../auth/service";
 import { createApp, createJWTMiddleware } from "../utils";
+import { getProfile, switchFollow } from "./service";
+
 
 const app = createApp();
 app.get("/:username", createJWTMiddleware(false), async (c) => {
-  const username = c.req.param("username");
-
-  const currentUser = c.get("jwtPayload");
-
-  const user = await getUserByUserName(username);
-
-  const extraData = {} as {
-    following?: boolean;
-  };
-  if (currentUser && user) {
-    const followingRecord = await c.get("$db").follow.findFirst({
-      where: {
-        followedUserId: user.id,
-        followingUserId: currentUser.id,
-        status: 1,
-      },
-    });
-
-    extraData.following = !!followingRecord;
-  }
+  const profile = await getProfile({
+    c,
+  });
 
   return c.json({
-    profile: {
-      ...pick(user, "username", "bio", "image"),
-      ...extraData,
-    },
+    profile,
   });
 });
 
 app.use(createJWTMiddleware());
-app.post("/:username/follow", (c) => c.json("follow user"));
-app.delete("/:username/follow", (c) => c.json("unfollow user"));
+app.post("/:username/follow", async (c) => {
+  const profile = await switchFollow(c);
+
+  return c.json({
+    profile,
+  });
+});
+app.delete("/:username/follow", async (c) => {
+  const profile = await switchFollow(c);
+
+  return c.json({
+    profile,
+  });
+});
 
 export default app;

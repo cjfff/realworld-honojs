@@ -1,11 +1,19 @@
 import { IPrisma } from "../db"
+// import "hono/dist/types/context"
 
-export type Variables = {
-  $db: IPrisma
-  aaa: string
-  jwtPayload: {
+type IUser = {
     username: string
     bio?: string
+    id: number
     image?: string
   }
+
+
+declare module 'hono' {
+    interface ContextVariableMap {
+        $db: IPrisma
+        aaa: string
+        jwtUser: IUser
+        // jwtPayload: IUser
+    }
 }

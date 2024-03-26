@@ -10,10 +10,9 @@ import { getUserByEmail } from './service'
 const app = createApp();
 
 const createToken = async (user: any) => {
-  const userData = pick(user, "email", "bio", "image", "username");
   const token = await sign(
     {
-      ...pick(userData, "email", "username"),
+      ...user,
       exp: getExpireTime(),
     },
     config.secret
@@ -31,7 +30,7 @@ app.post("/login", loginValidator(), async (c) => {
     return c.json("not found", 400);
   }
 
-  const userData = pick(user, "email", "bio", "image", "username");
+  const userData = pick(user, "email", "bio", "image", "username", 'id');
   const token = await createToken(userData);
   return c.json({
     user: {
@@ -43,30 +42,35 @@ app.post("/login", loginValidator(), async (c) => {
 
 app.post("/", registerValidator(), async (c) => {
   const {user: data} = c.req.valid("json");
-
+  
   const existedUser = await getUserByEmail(data.email)
 
   if (existedUser) {
     return c.json("user registered", 400);
   }
-
+  
   const user = await c.get("$db").user.create({
     data: {
       ...data,
       password: await hash(data.password),
     },
+    select: {
+      email: true,
+      bio: true,
+      username: true,
+      image: true,
+      id: true
+    }
   });
-  const userData = pick(user, "email", "bio", "image", "username", "id");
-  const token = await createToken(userData);
+
+  const token = await createToken(user);
 
   return c.json({
     user: {
-      ...userData,
+      ...user,
       token,
     },
   });
 });
-app.get("/user", (c) => c.json(`get user`));
-app.put("/user", (c) => c.json(`put user`));
 
 export default app;

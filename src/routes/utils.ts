@@ -1,12 +1,9 @@
 import { Hono, MiddlewareHandler } from "hono";
 import { verify } from "hono/jwt";
-import type { Variables } from "./type.d";
 import config from "../config";
 
 export const createApp = () => {
-  const app = new Hono<{
-    Variables: Variables;
-  }>();
+  const app = new Hono();
 
   return app;
 };
@@ -29,6 +26,7 @@ export const createJWTMiddleware = (
       const payload = await verify(token!, config.secret);
 
       c.set("jwtPayload", payload);
+      c.set("jwtUser", payload);
     } catch (e) {
       if (verifyBoolean) {
         return c.json("UnAuthorized", 400);
