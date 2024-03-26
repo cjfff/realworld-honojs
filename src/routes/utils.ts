@@ -22,11 +22,11 @@ export const createJWTMiddleware = (
       }
       const token = tokenStr?.split(" ")?.[1];
 
-      if (!token) {
+      if (!token && verifyBoolean) {
         return c.json("UnAuthorized", 400);
       }
 
-      const payload = await verify(token, config.secret);
+      const payload = await verify(token!, config.secret);
 
       c.set("jwtPayload", payload);
     } catch (e) {
