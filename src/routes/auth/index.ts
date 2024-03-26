@@ -10,10 +10,10 @@ import { getUserByEmail } from './service'
 const app = createApp();
 
 const createToken = async (user: any) => {
-  const userData = pick(user, "email", "bio", "image", "username", "id");
+  const userData = pick(user, "email", "bio", "image", "username");
   const token = await sign(
     {
-      ...pick(userData, "email", "username", "id"),
+      ...pick(userData, "email", "username"),
       exp: getExpireTime(),
     },
     config.secret
@@ -31,7 +31,7 @@ app.post("/login", loginValidator(), async (c) => {
     return c.json("not found", 400);
   }
 
-  const userData = pick(user, "email", "bio", "image", "username", "id");
+  const userData = pick(user, "email", "bio", "image", "username");
   const token = await createToken(userData);
   return c.json({
     user: {
