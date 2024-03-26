@@ -23,7 +23,7 @@ const createToken = async (user: any) => {
 };
 
 app.post("/login", loginValidator(), async (c) => {
-  const body = c.req.valid("json");
+  const {user: body} = c.req.valid("json");
 
   const user = await getUserByEmail(body.email)
 
@@ -42,7 +42,7 @@ app.post("/login", loginValidator(), async (c) => {
 });
 
 app.post("/", registerValidator(), async (c) => {
-  const data = c.req.valid("json");
+  const {user: data} = c.req.valid("json");
 
   const existedUser = await getUserByEmail(data.email)
 
