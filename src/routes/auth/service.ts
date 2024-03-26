@@ -7,3 +7,12 @@ export const getUserByEmail = (email: string) => {
         }
     })
 }
+
+
+export const getUserByUserName = (username: string) => {
+    return prisma.user.findFirst({
+        where: {
+            username
+        }
+    })
+}
