@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  bio       String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  articles   Article[]
+  comments   Comment[]
+  favorites  Favorite[]
+  // People who follow this user (where this user is the "following" - being followed)
+  // Example: If Bob follows Alice, then Alice.followers contains that Follow record
+  followers  Follow[]   @relation("UserFollowers")
+  // People this user follows (where this user is the "follower" - doing the following)
+  // Example: If Alice follows Bob, then Alice.following contains that Follow record
+  following  Follow[]   @relation("UserFollowing")
+
+  @@map("users")
+}
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String
+  body        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  authorId Int
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tags     ArticleTag[]
+  comments Comment[]
+  favorites Favorite[]
+
+  @@map("articles")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model ArticleTag {
+  articleId Int
+  tagId     Int
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  authorId  Int
+  articleId Int
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Favorite {
+  userId    Int
+  articleId Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, articleId])
+  @@map("favorites")
+}
+
+// Follow relationship model
+// 
+// EXAMPLE: If Alice (id=1) follows Bob (id=2):
+//   - followerId = 1 (Alice is the follower - she is doing the following)
+//   - followingId = 2 (Bob is being followed - he is the one being followed)
+//
+// In plain English:
+//   - "follower" = the person who clicks "Follow" (the one doing the action)
+//   - "following" = the person being followed (the target of the action)
+//
+// So when you query:
+//   - user.followers = people who follow this user (where followingId = user.id)
+//   - user.following = people this user follows (where followerId = user.id)
+model Follow {
+  followerId  Int  // The user who is doing the following (the follower)
+  followingId Int  // The user being followed (the one being followed)
+  follower    User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("follows")
+}
+
