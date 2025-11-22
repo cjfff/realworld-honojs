@@ -281,7 +281,7 @@ articles.post('/articles', requireAuth, async (c) => {
       })
     );
     const tags = await Promise.all(tagPromises);
-    console.log(tags, " tags");
+
     const createdArticle = await prisma.article.create({
       data: {
         slug: finalSlug,

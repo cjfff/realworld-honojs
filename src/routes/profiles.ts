@@ -34,8 +34,6 @@ profiles.get('/profiles/:username', async (c) => {
       currentUser?.id
     );
 
-    console.log(profile, 'profile')
-
     return c.json({ profile });
   } catch (error: any) {
     return c.json(formatError(error.message || 'An error occurred'), 500);

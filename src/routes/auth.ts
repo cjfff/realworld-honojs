@@ -48,7 +48,6 @@ auth.post('/users/login', async (c) => {
 auth.post('/users', async (c) => {
   try {
     const body = await c.req.json();
-    console.log(body, '===')
 
     const { user } = registerSchema.parse(body);
 
